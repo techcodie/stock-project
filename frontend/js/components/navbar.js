@@ -2,8 +2,12 @@
 class Navbar {
     static render() {
         const navbar = document.getElementById('navbar');
+        if (!navbar) {
+            console.error('Navbar element not found');
+            return;
+        }
         const isLoggedIn = AuthService.isLoggedIn();
-        
+
         if (isLoggedIn) {
             navbar.innerHTML = `
                 <a href="#" onclick="router.navigate('/')" class="${window.location.pathname === '/' ? 'active' : ''}">Dashboard</a>

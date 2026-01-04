@@ -4,8 +4,14 @@ class App {
         // Setup routes
         router.addRoute('/', () => {
             console.log('Dashboard route called');
-            Navbar.render();
-            DashboardPage.render();
+            try {
+                Navbar.render();
+                DashboardPage.render();
+            } catch (error) {
+                console.error('Error rendering Dashboard route:', error);
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) mainContent.innerHTML = `<div class="error">Failed to load dashboard: ${error.message}</div>`;
+            }
         });
 
         router.addRoute('/login', () => {

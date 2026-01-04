@@ -97,7 +97,7 @@ class StockValidationService {
     
     // Round to 2 decimal places
     return {
-      price: Math.round(finalPrice * 100) / 100,
+      price: Math.round(finalPrice * 100 ) / 100,
       changePercent: parseFloat(changePercent.toFixed(2))
     };
   }

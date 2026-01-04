@@ -1,82 +1,88 @@
 // Dashboard page
 class DashboardPage {
     static refreshInterval = null;
-    
+
     static async render() {
         console.log('Dashboard render called');
-        
-        if (!AuthService.requireAuth()) {
-            console.log('Auth required, redirecting');
-            return;
-        }
 
-        console.log('Rendering dashboard HTML');
-        const mainContent = document.getElementById('main-content');
-        
-        if (!mainContent) {
-            console.error('main-content element not found');
-            return;
-        }
-        mainContent.innerHTML = `
-            <div class="dashboard-container">
-                <div class="dashboard-content">
-                    <div class="welcome-section">
-                        <h3>Welcome to BSE Virtual Trading</h3>
-                        <p>Trade Indian stocks with real BSE/NSE market data and manage your virtual portfolio</p>
-                        <div class="auto-refresh-info">
-                            <span class="refresh-indicator">🔄 Auto-refreshing every 5 seconds</span>
-                        </div>
-                    </div>
-                    
-                    <div class="stocks-section">
-                        <div class="section-header">
-                            <h3>My Dashboard</h3>
-                            <div class="header-buttons">
-                                <button onclick="DashboardPage.toggleAutoRefresh()" id="auto-refresh-btn" class="refresh-btn">⏸️ Pause Auto-Refresh</button>
-                                <button onclick="DashboardPage.refreshStocks()" class="refresh-btn">🔄 Refresh Now</button>
-                            </div>
-                        </div>
+        try {
+            if (!AuthService.requireAuth()) {
+                console.log('Auth required, redirecting');
+                return;
+            }
+
+            console.log('Rendering dashboard HTML');
+            const mainContent = document.getElementById('main-content');
+
+            if (!mainContent) {
+                console.error('main-content element not found');
+                return;
+            }
+
+            // Render initial structure immediately
+            mainContent.innerHTML = `
+                <div class="dashboard-container">
+                    <div class="dashboard-content">
                         
-                        <!-- Stock Search Section -->
-                        <div class="search-section">
-                            <h4>Add Stock to Dashboard</h4>
-                            <div class="search-form">
-                                <div class="search-input-group">
-                                    <input type="text" id="stock-search-input" placeholder="Enter stock symbol (e.g., TCS, RELIANCE)" maxlength="10">
-                                    <button onclick="DashboardPage.addStock()" class="btn-search">Add Stock</button>
+                        <div class="stocks-section">
+                            <div class="section-header">
+                                <h3>My Dashboard</h3>
+                            </div>
+                            
+                            <!-- Stock Search Section -->
+                            <div class="search-section">
+                                <h4>Add Stock to Dashboard</h4>
+                                <div class="search-form">
+                                    <div class="search-input-group">
+                                        <input type="text" id="stock-search-input" placeholder="Enter stock symbol (e.g., TCS, RELIANCE)" maxlength="10">
+                                        <button onclick="DashboardPage.addStock()" class="btn-search">Add Stock</button>
+                                    </div>
                                 </div>
+                                <div id="search-message"></div>
                             </div>
-                            <div id="search-message"></div>
-                        </div>
-                        
-                        <div id="stocks-loading" class="loading-message">Loading stocks...</div>
-                        <div id="stocks-error" class="message error hidden"></div>
-                        <div id="stocks-content" class="hidden">
-                            <div class="stocks-table-container">
-                                <table class="stocks-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Symbol</th>
-                                            <th>Company Name</th>
-                                            <th>Current Price</th>
-                                            <th>Change %</th>
-                                            <th>Last Updated</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="stocks-tbody">
-                                    </tbody>
-                                </table>
+                            
+                            <div id="stocks-loading" class="loading-message">Loading stocks...</div>
+                            <div id="stocks-error" class="message error hidden"></div>
+                            <div id="stocks-content" class="hidden">
+                                <div class="stocks-table-container">
+                                    <table class="stocks-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Symbol</th>
+                                                <th>Company Name</th>
+                                                <th>Current Price</th>
+                                                <th>Change %</th>
+                                                <th>Last Updated</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="stocks-tbody">
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
 
-        console.log('Dashboard HTML rendered, loading stocks...');
-        await this.loadStocks();
-        this.startAutoRefresh();
+            console.log('Dashboard HTML rendered, loading stocks...');
+            await this.loadStocks();
+            this.startAutoRefresh();
+        } catch (error) {
+            console.error('CRITICAL ERROR in Dashboard.render:', error);
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: red;">
+                        <h2>Error Loading Dashboard</h2>
+                        <p>${error.message}</p>
+                        <p>Check console for details.</p>
+                        <button onclick="window.location.reload()" style="padding: 10px 20px; margin-top: 10px;">Reload Page</button>
+                    </div>
+                `;
+            }
+        }
     }
 
     static async loadStocks(silent = false) {
@@ -99,7 +105,7 @@ class DashboardPage {
             }
 
             console.log('Loading stocks...');
-            
+
             // Try watchlist first, fallback to all stocks
             let response;
             try {
@@ -110,16 +116,16 @@ class DashboardPage {
                 response = await api.get('/stocks');
                 console.log('Stocks response:', response);
             }
-            
+
             // Always show content div, even if empty
             if (!silent) {
                 loadingDiv.classList.add('hidden');
                 contentDiv.classList.remove('hidden');
             }
-            
+
             if (response && response.success) {
                 const stocks = response.data || [];
-                
+
                 if (stocks.length === 0) {
                     tbody.innerHTML = `
                         <tr>
@@ -134,7 +140,7 @@ class DashboardPage {
                         const changeClass = changePercent >= 0 ? 'profit' : 'loss';
                         const changeSign = changePercent >= 0 ? '+' : '';
                         const lastUpdated = new Date().toLocaleTimeString();
-                        
+
                         return `
                             <tr class="stock-row" data-symbol="${stock.symbol}">
                                 <td><strong>${stock.symbol || 'N/A'}</strong></td>
@@ -149,8 +155,8 @@ class DashboardPage {
                                 </td>
                             </tr>
                         `;
-                    }).join(''));
-                    
+                    }).join('');
+
                     // Add visual feedback for updates
                     if (silent) {
                         this.highlightUpdatedRows();
@@ -172,7 +178,7 @@ class DashboardPage {
                 loadingDiv.classList.add('hidden');
                 contentDiv.classList.remove('hidden');
             }
-            
+
             // Show user-friendly message instead of breaking
             tbody.innerHTML = `
                 <tr>
@@ -188,39 +194,26 @@ class DashboardPage {
     static async refreshStocks() {
         await this.loadStocks(false);
     }
-    
+
     static startAutoRefresh() {
         if (this.refreshInterval) {
             clearInterval(this.refreshInterval);
         }
-        
+
         this.refreshInterval = setInterval(async () => {
             await this.loadStocks(true); // Silent refresh
         }, 5000); // Refresh every 5 seconds
     }
-    
+
     static stopAutoRefresh() {
         if (this.refreshInterval) {
             clearInterval(this.refreshInterval);
             this.refreshInterval = null;
         }
     }
-    
-    static toggleAutoRefresh() {
-        const btn = document.getElementById('auto-refresh-btn');
-        const indicator = document.querySelector('.refresh-indicator');
-        
-        if (this.refreshInterval) {
-            this.stopAutoRefresh();
-            btn.innerHTML = '▶️ Start Auto-Refresh';
-            indicator.innerHTML = '⏸️ Auto-refresh paused';
-        } else {
-            this.startAutoRefresh();
-            btn.innerHTML = '⏸️ Pause Auto-Refresh';
-            indicator.innerHTML = '🔄 Auto-refreshing every 5 seconds';
-        }
-    }
-    
+
+
+
     static highlightUpdatedRows() {
         const rows = document.querySelectorAll('.stock-row');
         rows.forEach(row => {
@@ -245,12 +238,12 @@ class DashboardPage {
 
         try {
             const response = await api.post('/watchlist', { symbol });
-            
+
             if (response.success) {
                 messageDiv.innerHTML = '<div class="message success">Stock added to dashboard successfully</div>';
                 input.value = '';
                 await this.loadStocks();
-                
+
                 // Clear success message after 3 seconds
                 setTimeout(() => {
                     messageDiv.innerHTML = '';
@@ -270,7 +263,7 @@ class DashboardPage {
 
         try {
             const response = await api.delete(`/watchlist/${stockId}`);
-            
+
             if (response.success) {
                 await this.loadStocks();
             } else {
@@ -289,7 +282,7 @@ class DashboardPage {
             maximumFractionDigits: 2
         }).format(value);
     }
-    
+
     // Cleanup when leaving the page
     static cleanup() {
         this.stopAutoRefresh();
