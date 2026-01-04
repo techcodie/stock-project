@@ -1,0 +1,16 @@
+{
+  "name": "stock-trading-frontend",
+  "version": "1.0.0",
+  "description": "Virtual Stock Trading Frontend",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["stock", "trading", "frontend"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
