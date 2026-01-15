@@ -9,9 +9,12 @@ import Portfolio from './pages/Portfolio';
 import Transactions from './pages/Transactions';
 import './styles.css';
 
+import ThreeBackground from './components/ThreeBackground';
+
 function App() {
   return (
     <Router>
+      <ThreeBackground />
       <div className="app">
         <Navbar />
         <main className="main-content">

@@ -40,29 +40,49 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Dashboard</h1>
-        <Link to="/trade" className="btn-primary">Trade Stocks</Link>
+        <div className="header-content">
+          <div className="header-title-group">
+            <div>
+              <h1>Dashboard</h1>
+              <p className="header-subtitle">Track your portfolio performance and market overview</p>
+            </div>
+          </div>
+          <Link to="/trade" className="btn-primary header-action-btn">
+            Trade Stocks
+          </Link>
+        </div>
       </header>
 
       {/* Summary Cards */}
       <div className="stats-grid">
-        <div className="stat-card">
-          <h3>Wallet Balance</h3>
-          <p className="stat-value">₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+        <div className="stat-item">
+          <span className="stat-label">Wallet Balance</span>
+          <div className="stat-card">
+            <p className="stat-value">₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+          </div>
         </div>
-        <div className="stat-card">
-          <h3>Portfolio Value</h3>
-          <p className="stat-value">₹{totalPortfolioValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+
+        <div className="stat-item">
+          <span className="stat-label">Portfolio Value</span>
+          <div className="stat-card">
+            <p className="stat-value">₹{totalPortfolioValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+          </div>
         </div>
-        <div className={`stat-card ${totalProfitLoss >= 0 ? 'stat-card-profit' : 'stat-card-loss'}`}>
-          <h3>Total Profit/Loss</h3>
-          <p className={`stat-value ${totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}`}>
-            {totalProfitLoss >= 0 ? '+' : ''}₹{Math.abs(totalProfitLoss).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-          </p>
+
+        <div className="stat-item">
+          <span className="stat-label">Total Profit/Loss</span>
+          <div className={`stat-card ${totalProfitLoss >= 0 ? 'stat-card-profit' : 'stat-card-loss'}`}>
+            <p className={`stat-value ${totalProfitLoss >= 0 ? 'text-success' : 'text-danger'}`}>
+              {totalProfitLoss >= 0 ? '+' : ''}₹{Math.abs(totalProfitLoss).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            </p>
+          </div>
         </div>
-        <div className="stat-card highlight">
-          <h3>Net Worth</h3>
-          <p className="stat-value">₹{totalNetWorth.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+
+        <div className="stat-item">
+          <span className="stat-label">Net Worth</span>
+          <div className="stat-card highlight">
+            <p className="stat-value">₹{totalNetWorth.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+          </div>
         </div>
       </div>
 

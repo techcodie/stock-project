@@ -19,19 +19,39 @@ function Navbar() {
   };
 
   return (
-    <nav>
+    <nav className="navbar">
       {isLoggedIn ? (
         <>
-          <Link to="/">Dashboard</Link>
-          <Link to="/trade">Trade</Link>
-          <Link to="/portfolio">Portfolio</Link>
-          <Link to="/transactions">Transactions</Link>
-          <button onClick={handleLogout} className="btn-logout">Logout</button>
+          <div className="nav-brand">
+            <span className="brand-text">StockTrader</span>
+          </div>
+          <div className="nav-links">
+            <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
+              Dashboard
+            </Link>
+            <Link to="/trade" className={location.pathname === '/trade' ? 'active' : ''}>
+              Trade
+            </Link>
+            <Link to="/portfolio" className={location.pathname === '/portfolio' ? 'active' : ''}>
+              Portfolio
+            </Link>
+            <Link to="/transactions" className={location.pathname === '/transactions' ? 'active' : ''}>
+              Transactions
+            </Link>
+            <button onClick={handleLogout} className="btn-logout">
+              Logout
+            </button>
+          </div>
         </>
       ) : (
         <>
-          <Link to="/login">Login</Link>
-          <Link to="/signup">Signup</Link>
+          <div className="nav-brand">
+            <span className="brand-text">StockTrader</span>
+          </div>
+          <div className="nav-links">
+            <Link to="/login">Login</Link>
+            <Link to="/signup">Signup</Link>
+          </div>
         </>
       )}
     </nav>

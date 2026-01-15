@@ -100,50 +100,50 @@ function Transactions() {
       {/* Stats Cards */}
       {transactions.length > 0 && (
         <div className="transactions-stats">
-          <div className="stat-card">
-            <div className="stat-icon buy-bg">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-            </div>
-            <div className="stat-content">
-              <div className="stat-label">Buy Orders</div>
+          <div className="stat-item">
+            <span className="stat-label">Buy Orders</span>
+            <div className="stat-card">
+              <div className="stat-icon buy-bg" style={{ marginRight: '1rem' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
               <div className="stat-value">{buyCount}</div>
             </div>
           </div>
 
-          <div className="stat-card">
-            <div className="stat-icon sell-bg">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 10l7-7m0 0l7 7m-7-7v18" />
-              </svg>
-            </div>
-            <div className="stat-content">
-              <div className="stat-label">Sell Orders</div>
+          <div className="stat-item">
+            <span className="stat-label">Sell Orders</span>
+            <div className="stat-card">
+              <div className="stat-icon sell-bg" style={{ marginRight: '1rem' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
+              </div>
               <div className="stat-value">{sellCount}</div>
             </div>
           </div>
 
-          <div className="stat-card">
-            <div className="stat-icon total-bg">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z" />
-              </svg>
-            </div>
-            <div className="stat-content">
-              <div className="stat-label">Total Volume</div>
+          <div className="stat-item">
+            <span className="stat-label">Total Volume</span>
+            <div className="stat-card">
+              <div className="stat-icon total-bg" style={{ marginRight: '1rem' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z" />
+                </svg>
+              </div>
               <div className="stat-value">₹{totalVolume.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
             </div>
           </div>
 
-          <div className="stat-card">
-            <div className="stat-icon count-bg">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" />
-              </svg>
-            </div>
-            <div className="stat-content">
-              <div className="stat-label">Total Trades</div>
+          <div className="stat-item">
+            <span className="stat-label">Total Trades</span>
+            <div className="stat-card">
+              <div className="stat-icon count-bg" style={{ marginRight: '1rem' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" />
+                </svg>
+              </div>
               <div className="stat-value">{transactions.length}</div>
             </div>
           </div>
