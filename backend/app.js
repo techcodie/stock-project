@@ -3,13 +3,16 @@ const express = require('express');
 const cors = require('cors');
 
 // Import routes
+// Import routes
 const authRoutes = require('./routes/authRoutes');
 const tradingRoutes = require('./routes/tradingRoutes');
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
+const walletRoutes = require('./routes/walletRoutes');
+const stockRoutes = require('./routes/stockRoutes');
 
 // Import error handler
-const errorHandler = require('./middlewares/errorHandler');
+const errorHandler = require('./middleware/errorHandler');
 
 // Create Express application
 const app = express();
@@ -21,7 +24,7 @@ app.use(express.json());
 // Enable CORS (Cross-Origin Resource Sharing)
 // Allow requests from frontend running on port 5173
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'http://localhost:8080'],
   credentials: true
 }));
 
@@ -52,6 +55,12 @@ app.use('/api/portfolio', portfolioRoutes);
 // Transaction routes (auth required)
 app.use('/api/transactions', transactionRoutes);
 
+// Wallet routes (auth required)
+app.use('/api/wallet', walletRoutes);
+
+// Stock routes (auth required)
+app.use('/api/stocks', stockRoutes);
+
 // 404 handler for undefined routes
 app.use((req, res) => {
   res.status(404).json({
@@ -65,3 +74,5 @@ app.use(errorHandler);
 
 module.exports = app;
 
+
+// Server restart trigger for Auth Middleware updates

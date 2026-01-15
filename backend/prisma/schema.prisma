@@ -45,6 +45,8 @@ model Stock {
   id          String       @id @default(uuid())
   symbol      String       @unique // Stock ticker symbol (e.g., "AAPL")
   name        String       // Company name
+  currentPrice Float       @default(0.0)
+  volume      Int          @default(0)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   

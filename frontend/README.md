@@ -1,95 +1,16 @@
-# Virtual Stock Trading & Portfolio Management - Frontend
+# React + Vite
 
-React frontend for the Virtual Stock Trading & Portfolio Management System.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Tech Stack
+Currently, two official plugins are available:
 
-- **Framework**: React (Vite)
-- **Routing**: React Router DOM
-- **HTTP Client**: Axios
-- **Styling**: Plain CSS
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Quick Start
+## React Compiler
 
-### Prerequisites
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-- Node.js (v16 or higher)
-- Backend server running on `http://localhost:3000`
+## Expanding the ESLint configuration
 
-### Installation
-
-```bash
-# Install dependencies
-npm install
-```
-
-### Run Development Server
-
-```bash
-npm run dev
-```
-
-Frontend will start on `http://localhost:5173`
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-### Preview Production Build
-
-```bash
-npm run preview
-```
-
-## Project Structure
-
-```
-frontend/
-├── src/
-│   ├── pages/
-│   │   ├── Login.jsx
-│   │   ├── Signup.jsx
-│   │   ├── Dashboard.jsx
-│   │   ├── Trade.jsx
-│   │   ├── Portfolio.jsx
-│   │   └── Transactions.jsx
-│   ├── components/
-│   │   ├── Navbar.jsx
-│   │   └── ProtectedRoute.jsx
-│   ├── services/
-│   │   └── api.js (Axios instance)
-│   ├── App.jsx
-│   ├── main.jsx
-│   ├── styles.css
-│   └── index.css
-└── package.json
-```
-
-## Configuration
-
-### API Configuration
-
-The API base URL is configured in `src/services/api.js`:
-
-```javascript
-baseURL: "http://localhost:3000/api";
-```
-
-JWT tokens are automatically attached to requests via Axios interceptor.
-
-## Features
-
-- User authentication (Signup/Login)
-- JWT token management
-- Stock trading (Buy/Sell)
-- Portfolio management
-- Transaction history
-- Protected routes
-
-## Environment
-
-- **Development**: `http://localhost:5173`
-- **Backend API**: `http://localhost:3000/api`
-- **JWT Storage**: localStorage (key: `token`)
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
