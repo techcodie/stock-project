@@ -1,0 +1,17 @@
+{
+    "name": "stock-project",
+    "version": "1.0.0",
+    "description": "Stock Trading Platform",
+    "scripts": {
+        "build": "cd frontend && npm install && npm run build",
+        "start:frontend": "cd frontend && npm run dev",
+        "start:backend": "cd backend && npm run dev"
+    },
+    "keywords": [
+        "stock",
+        "trading",
+        "portfolio"
+    ],
+    "author": "",
+    "license": "ISC"
+}
