@@ -23,10 +23,7 @@ app.use(express.json());
 
 // Enable CORS (Cross-Origin Resource Sharing)
 // Allow requests from frontend running on port 5173
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:8080' , "https://stock-project-lime.vercel.app"],
-  credentials: true
-}));
+app.use(cors());
 
 // Request logging middleware
 app.use((req, res, next) => {
