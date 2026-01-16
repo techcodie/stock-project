@@ -606,6 +606,33 @@ nav.navbar {
   box-shadow: 0 0 15px var(--danger-glow) !important;
 }
 
+/* Trade Action Button - Vibrant Blue */
+.btn-trade-action {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-trade-action:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
+}
+
+.btn-trade-action:active {
+  transform: translateY(0);
+}
+
 /* Buttons */
 .btn-primary {
   background-color: var(--primary);

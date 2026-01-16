@@ -4,6 +4,8 @@
     "description": "Stock Trading Platform",
     "scripts": {
         "build": "cd frontend && npm install && npm run build",
+        "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+        "dev": "npm run start",
         "start:frontend": "cd frontend && npm run dev",
         "start:backend": "cd backend && npm run dev"
     },
@@ -13,5 +15,8 @@
         "portfolio"
     ],
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "devDependencies": {
+        "concurrently": "^9.2.1"
+    }
 }
