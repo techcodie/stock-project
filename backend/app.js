@@ -43,6 +43,12 @@ app.get('/health', (req, res) => {
 // Authentication routes (no auth required)
 app.use('/api/auth', authRoutes);
 
+
+app.get('/',(req,res)=>{
+  res.send('Hello World!')
+})
+
+
 // Trading routes (auth required)
 app.use('/api/trade', tradingRoutes);
 

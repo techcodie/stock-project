@@ -54,12 +54,8 @@ export function ShaderPlane({
     position,
     color1 = "#ff5722",
     color2 = "#ffffff",
-}: {
-    position: [number, number, number]
-    color1?: string
-    color2?: string
 }) {
-    const mesh = useRef<THREE.Mesh>(null)
+    const mesh = useRef(null)
 
     const uniforms = useMemo(
         () => ({
@@ -95,11 +91,8 @@ export function ShaderPlane({
 export function EnergyRing({
     radius = 1,
     position = [0, 0, 0],
-}: {
-    radius?: number
-    position?: [number, number, number]
 }) {
-    const mesh = useRef<THREE.Mesh>(null)
+    const mesh = useRef(null)
 
     useFrame((state) => {
         if (mesh.current) {
