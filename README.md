@@ -1,178 +1,91 @@
-# Virtual Stock Trading & Portfolio Management System
+# StockTrader - Virtual Stock Trading Platform
 
-A full-stack virtual stock trading and portfolio management application built with Node.js, Express, React, and MySQL.
+A comprehensive full-stack application for practicing stock trading with virtual money. Build your portfolio, track live price movements, and master trading strategies without any real financial risk.
 
-## Tech Stack
-
-### Backend
-- Node.js + Express.js
-- MySQL (Prisma ORM)
-- JWT Authentication
-- bcryptjs for password hashing
-
-### Frontend
-- React (Vite)
-- React Router DOM
-- Axios
-- Plain CSS
-
-## Quick Start Guide
+## 🚀 Quick Start Guide
 
 ### Prerequisites
-
 - **Node.js** (v16 or higher)
-- **MySQL** (v8.0 or higher)
+- **MySQL** (v8.0 or higher) - or a hosted database like Neon (PostgreSQL via Prisma)
 - **npm** (comes with Node.js)
 
-### Step 1: Clone and Setup
-
+### Step 1: System Setup
 ```bash
-# Navigate to project directory
+# Clone the repository
+git clone <repository-url>
 cd "STOCK PROJECT"
 ```
 
-### Step 2: Start MySQL (macOS)
+### Step 2: Backend Configuration
+1. Navigate to the backend directory: `cd backend`
+2. Install dependencies: `npm install`
+3. Set up environment variables:
+   - Copy `.env.example` to `.env`
+   - Update `DATABASE_URL` with your database connection string
+   - Set a secure `JWT_SECRET`
+4. Initialize the database:
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev --name init
+   ```
+5. Start the backend: `npm run dev`
 
-```bash
-# Start MySQL service
-brew services start mysql
+### Step 3: Frontend Configuration
+1. Open a new terminal and navigate to the frontend: `cd frontend`
+2. Install dependencies: `npm install`
+3. Start the frontend: `npm run dev`
 
-# Or manually
-mysql.server start
+---
 
-# Create database
-mysql -u root -p
-# In MySQL console:
-CREATE DATABASE stock_db;
-exit;
-```
+## 🔑 Test Credentials
+To explore the application without creating a new account, use the following test user:
 
-### Step 3: Setup Backend
+| Role | Email | Password |
+|------|-------|----------|
+| **Test User** | `testuser@gmail.com` | `test123` |
 
-```bash
-# Navigate to backend
-cd backend
+---
 
-# Install dependencies
-npm install
+## 🛠 Tech Stack
+- **Frontend**: React (Vite), React Router, Axios, Plain CSS, Three.js (for backgrounds)
+- **Backend**: Node.js, Express.js
+- **Database**: Prisma ORM (supports MySQL/PostgreSQL)
+- **Auth**: JWT (JSON Web Tokens) with bcryptjs hashing
 
-# Copy environment file
-cp .env.example .env
+---
 
-# Edit .env and update:
-# - DATABASE_URL with your MySQL credentials
-# - JWT_SECRET with a secure random string
+## ✨ Features
+- **Real-time Simulation**: Prices fluctuate every 3-5 seconds.
+- **Virtual Wallet**: Start with ₹10,00,000 to practice trading.
+- **Portfolio Management**: Real-time tracking of profit/loss.
+- **Account Reset**: Ability to reset and start fresh if net worth falls below ₹50,000.
+- **Comprehensive History**: Detailed transaction logs for all trades.
+- **Beautiful UI**: Modern dark theme with glassmorphism and 3D background effects.
 
-# Generate Prisma Client
-npx prisma generate
+---
 
-# Run migrations
-npx prisma migrate dev --name init
-
-# Start backend server
-npm run dev
-```
-
-Backend runs on: `http://localhost:3000`
-
-### Step 4: Setup Frontend (in a new terminal)
-
-```bash
-# Navigate to frontend
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start frontend server
-npm run dev
-```
-
-Frontend runs on: `http://localhost:5173`
-
-### Step 5: Access Application
-
-Open your browser and navigate to: `http://localhost:5173`
-
-## Project Structure
-
-```
+## 📁 Project Structure
+```text
 STOCK PROJECT/
-├── backend/
-│   ├── src/
-│   ├── prisma/
-│   ├── .env.example
-│   └── README.md
-├── frontend/
-│   ├── src/
-│   └── README.md
-└── README.md (this file)
+├── backend/          # Express API, Prisma schema, and logic
+├── frontend/         # React application and styles
+├── prisma/           # Database migrations and schema
+└── README.md         # Project documentation (this file)
 ```
 
-## Features
+---
 
-- ✅ User Authentication (Signup/Login)
-- ✅ JWT Token Management
-- ✅ Stock Trading (Buy/Sell)
-- ✅ Portfolio Management
-- ✅ Transaction History
-- ✅ Protected Routes
+## 🛠 Common Fixes
+- **MySQL Connection**: Ensure MySQL service is running (`brew services start mysql` on macOS).
+- **Port Conflict**: If port 3000 (Backend) or 5173 (Frontend) are busy, use `lsof -ti:PORT` and `kill -9 <PID>` to clear them.
+- **Database Errors**: If the schema changes, run `npx prisma generate` and `npx prisma migrate dev`.
 
-## Documentation
+---
 
-- **Backend API**: See [backend/README.md](./backend/README.md)
-- **Frontend**: See [frontend/README.md](./frontend/README.md)
+## 🚀 Deployment Summary
+- **Frontend**: Best deployed to **Vercel**.
+- **Backend**: Recommended to use **Render** or **Railway**.
+- **Database**: Use a managed service like **Neon (PostgreSQL)** or **Railway MySQL**.
 
-## Common Issues
-
-### MySQL Connection Issues
-
-```bash
-# Check MySQL status
-brew services list | grep mysql
-
-# Start MySQL
-brew services start mysql
-
-# Test connection
-mysql -u root -p
-```
-
-### Port Already in Use
-
-```bash
-# Find process on port 3000
-lsof -ti:3000
-
-# Kill process
-kill -9 $(lsof -ti:3000)
-
-# Or change PORT in backend/.env
-```
-
-### CORS Errors
-
-- Ensure backend is running on port 3000
-- Ensure frontend is running on port 5173
-- Check backend CORS configuration in `backend/src/app.js`
-
-## Development
-
-### Backend Development
-
-```bash
-cd backend
-npm run dev  # Auto-restart on file changes
-```
-
-### Frontend Development
-
-```bash
-cd frontend
-npm run dev  # Hot module replacement
-```
-
-## License
-
-ISC
-
+---
+*Created with ❤️ for Advanced Agentic Coding by Ansh Baheti.*
