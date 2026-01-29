@@ -108,8 +108,66 @@ const addBalance = async (req, res, next) => {
   }
 };
 
+/**
+ * Reset Account - Clear portfolio and reset wallet to 10,00,000
+ * Only allowed when net worth is below 50,000
+ */
+const resetAccount = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+
+    // Get current wallet balance
+    const wallet = await prisma.wallet.findUnique({ where: { userId } });
+
+    // Get portfolio value
+    const portfolio = await prisma.portfolio.findMany({
+      where: { userId },
+      include: { stock: true }
+    });
+
+    // Calculate total portfolio value
+    const portfolioValue = portfolio.reduce((total, holding) => {
+      return total + (holding.quantity * holding.stock.currentPrice);
+    }, 0);
+
+    const netWorth = (wallet?.balance || 0) + portfolioValue;
+
+    // Check if net worth is below 50,000
+    if (netWorth >= 50000) {
+      return res.status(400).json({
+        success: false,
+        message: `Net worth (₹${netWorth.toFixed(2)}) is above ₹50,000. Account reset not allowed.`
+      });
+    }
+
+    // Reset account in a transaction
+    await prisma.$transaction(async (tx) => {
+      // Delete all portfolio entries
+      await tx.portfolio.deleteMany({ where: { userId } });
+
+      // Delete all transactions
+      await tx.transaction.deleteMany({ where: { userId } });
+
+      // Reset wallet balance to 10,00,000
+      await tx.wallet.update({
+        where: { userId },
+        data: { balance: 1000000 }
+      });
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Account reset successfully! Your balance has been restored to ₹10,00,000.',
+      data: { balance: 1000000 }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getPortfolio,
   getWalletBalance,
-  addBalance
+  addBalance,
+  resetAccount
 };

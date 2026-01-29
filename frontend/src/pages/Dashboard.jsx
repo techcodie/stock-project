@@ -8,27 +8,58 @@ function Dashboard() {
   const [portfolio, setPortfolio] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [resetting, setResetting] = useState(false);
+  const [resetMessage, setResetMessage] = useState('');
+
+  const fetchData = async () => {
+    try {
+      const [walletRes, portfolioRes] = await Promise.all([
+        api.get('/wallet/balance'),
+        api.get('/portfolio')
+      ]);
+
+      setBalance(walletRes.data.data.balance);
+      setPortfolio(portfolioRes.data.data);
+    } catch (err) {
+      console.error('Dashboard error:', err);
+      setError('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [walletRes, portfolioRes] = await Promise.all([
-          api.get('/wallet/balance'),
-          api.get('/portfolio')
-        ]);
-
-        setBalance(walletRes.data.data.balance);
-        setPortfolio(portfolioRes.data.data);
-      } catch (err) {
-        console.error('Dashboard error:', err);
-        setError('Failed to load dashboard data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
+
+    // Auto-refresh every 5 seconds to get latest data
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
+
+  const handleResetAccount = async () => {
+    if (!window.confirm('Are you sure you want to reset your account? This will clear all your holdings and transactions, and restore your balance to ₹10,00,000.')) {
+      return;
+    }
+
+    setResetting(true);
+    setResetMessage('');
+
+    try {
+      const response = await api.post('/wallet/reset-account');
+      if (response.data.success) {
+        setResetMessage(response.data.message);
+        // Refresh dashboard data
+        await fetchData();
+      }
+    } catch (err) {
+      setResetMessage(err.response?.data?.message || 'Failed to reset account');
+    } finally {
+      setResetting(false);
+    }
+  };
 
   if (loading) return <div className="loading-container"><div className="spinner"></div></div>;
   if (error) return <div className="error-message">{error}</div>;
@@ -52,6 +83,27 @@ function Dashboard() {
           </Link>
         </div>
       </header>
+
+      {/* Reset Account Alert - Shows when net worth < 50,000 */}
+      {totalNetWorth < 50000 && (
+        <div className="reset-account-alert">
+          <div className="reset-alert-content">
+            <div className="reset-alert-icon">⚠️</div>
+            <div className="reset-alert-text">
+              <strong>Low Net Worth Alert!</strong>
+              <p>Your net worth has fallen below ₹50,000. You can reset your account to start fresh with ₹10,00,000.</p>
+            </div>
+            <button
+              onClick={handleResetAccount}
+              disabled={resetting}
+              className="btn-reset-account"
+            >
+              {resetting ? 'Resetting...' : 'Reset Account'}
+            </button>
+          </div>
+          {resetMessage && <div className="reset-message">{resetMessage}</div>}
+        </div>
+      )}
 
       {/* Summary Cards */}
       <div className="stats-grid">
@@ -133,3 +185,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+

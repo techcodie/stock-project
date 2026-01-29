@@ -41,7 +41,6 @@ function Signup() {
 
   return (
     <div className="form-container">
-      <h2>Signup</h2>
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-group">
           <label htmlFor="name">Name</label>

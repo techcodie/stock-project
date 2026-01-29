@@ -4,7 +4,16 @@ import { Suspense } from "react";
 
 export default function ThreeBackground() {
     return (
-        <div className="fixed inset-0 -z-10 w-full h-full bg-black pointer-events-none">
+        <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: -10,
+            pointerEvents: 'none',
+            backgroundColor: 'black'
+        }}>
             <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
                 <Suspense fallback={null}>
                     <ambientLight intensity={0.5} />
@@ -15,3 +24,4 @@ export default function ThreeBackground() {
         </div>
     );
 }
+
