@@ -1,6 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
@@ -11,6 +12,14 @@ import './styles.css';
 
 import ThreeBackground from './components/ThreeBackground';
 
+// Check if user is logged in
+const isAuthenticated = () => !!localStorage.getItem('token');
+
+// Redirect to dashboard if already logged in
+function PublicRoute({ children }) {
+  return isAuthenticated() ? <Navigate to="/dashboard" replace /> : children;
+}
+
 function App() {
   return (
     <Router>
@@ -19,10 +28,35 @@ function App() {
         <Navbar />
         <main className="main-content">
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            {/* Public routes */}
             <Route
               path="/"
+              element={
+                <PublicRoute>
+                  <LandingPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PublicRoute>
+                  <Signup />
+                </PublicRoute>
+              }
+            />
+
+            {/* Protected routes */}
+            <Route
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <Dashboard />
