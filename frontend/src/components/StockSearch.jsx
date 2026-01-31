@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import api from '../services/api';
+import StockChart from './StockChart';
 
 function StockSearch() {
     const [searchSymbol, setSearchSymbol] = useState('');
@@ -179,6 +180,8 @@ function StockSearch() {
                             </span>
                         </div>
                     </div>
+
+                    <StockChart symbol={searchResult.symbol} />
                 </div>
             )}
 

@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { generateHistoricalData } = require('../services/stockHistoryService');
 
 // Popular stocks for autocomplete
 const POPULAR_STOCKS = [
@@ -121,6 +122,36 @@ const getStockPrice = async (req, res, next) => {
 };
 
 /**
+ * Get historical price data for a stock
+ */
+const getStockHistory = async (req, res, next) => {
+    try {
+        const { symbol } = req.params;
+        const { timeframe = '1M' } = req.query;
+
+        const stock = await prisma.stock.findUnique({
+            where: { symbol: symbol.toUpperCase() }
+        });
+
+        if (!stock) {
+            return res.status(404).json({
+                success: false,
+                message: 'Stock not found'
+            });
+        }
+
+        const history = generateHistoricalData(stock.symbol, timeframe, stock.currentPrice);
+
+        res.status(200).json({
+            success: true,
+            data: history
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
  * Initialize stocks with realistic starting prices
  */
 const initializeStocks = async () => {
@@ -155,5 +186,6 @@ module.exports = {
     searchStocks,
     getStockById,
     getStockPrice,
+    getStockHistory,
     initializeStocks
 };
