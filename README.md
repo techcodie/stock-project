@@ -61,6 +61,7 @@ To explore the application without creating a new account, use the following tes
 - **Account Reset**: Ability to reset and start fresh if net worth falls below ₹50,000.
 - **Comprehensive History**: Detailed transaction logs for all trades.
 - **Beautiful UI**: Modern dark theme with glassmorphism and 3D background effects.
+- **Dashboard Watchlist**: Add/remove stocks to a personal dashboard with auto-refreshing prices every 5 seconds.
 
 ---
 
