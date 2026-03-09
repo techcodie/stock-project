@@ -65,11 +65,13 @@ function Trade() {
         const response = await api.get(`/stocks/${selectedStock.id}`);
         if (response.data.success) {
           const newPrice = response.data.data.currentPrice;
-          if (currentPrice !== null) {
-            setPreviousPrice(currentPrice);
-            setPriceChange(newPrice - currentPrice);
-          }
-          setCurrentPrice(newPrice);
+          setCurrentPrice(prev => {
+            if (prev !== null) {
+              setPreviousPrice(prev);
+              setPriceChange(newPrice - prev);
+            }
+            return newPrice;
+          });
         }
       } catch (error) {
         console.error('Error fetching price:', error);
@@ -83,7 +85,7 @@ function Trade() {
     const interval = setInterval(fetchPrice, 3000);
 
     return () => clearInterval(interval);
-  }, [selectedStock, currentPrice]);
+  }, [selectedStock]);
 
   // Handle stock selection
   const handleStockSelect = (e) => {

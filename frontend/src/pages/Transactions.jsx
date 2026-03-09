@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 
 function Transactions() {
@@ -10,9 +10,9 @@ function Transactions() {
   // Fetch transactions data
   useEffect(() => {
     fetchTransactions();
-  }, []);
+  }, [fetchTransactions]);
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     setLoading(true);
     setError('');
 
@@ -27,7 +27,7 @@ function Transactions() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Format date
   const formatDate = (dateString) => {
