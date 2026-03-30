@@ -8,18 +8,6 @@ function Portfolio() {
   const [error, setError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
 
-  // Fetch portfolio data
-  useEffect(() => {
-    fetchPortfolio();
-
-    // Auto-refresh every 5 seconds to get latest prices
-    const interval = setInterval(() => {
-      fetchPortfolio(true);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const fetchPortfolio = async (silent = false) => {
     if (!silent) setLoading(true);
     else setRefreshing(true);
@@ -39,6 +27,18 @@ function Portfolio() {
       setRefreshing(false);
     }
   };
+
+  // Fetch portfolio data
+  useEffect(() => {
+    fetchPortfolio();
+
+    // Auto-refresh every 5 seconds to get latest prices
+    const interval = setInterval(() => {
+      fetchPortfolio(true);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Calculate totals
   const totalInvestment = portfolio.reduce((sum, item) =>

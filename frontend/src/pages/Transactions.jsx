@@ -8,10 +8,6 @@ function Transactions() {
   const [filter, setFilter] = useState('ALL'); // ALL, BUY, SELL
 
   // Fetch transactions data
-  useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
-
   const fetchTransactions = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -29,9 +25,16 @@ function Transactions() {
     }
   }, []);
 
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
   // Format date
   const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
+    
     return new Intl.DateTimeFormat('en-IN', {
       year: 'numeric',
       month: 'short',
