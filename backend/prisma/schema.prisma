@@ -1,13 +1,15 @@
-// Prisma schema for Virtual Stock Portfolio Management
-// Using MySQL database
+// Prisma schema for StockTrader
+// Database: PostgreSQL (with the pgvector extension for the AI / RAG feature)
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector] // pgvector extension for similarity search
 }
 
 // User model - stores user account information
@@ -18,11 +20,12 @@ model User {
   email       String       @unique
   password    String       // Hashed password
   createdAt   DateTime     @default(now())
-  
+
   // Relations
   wallet      Wallet?
   portfolio   Portfolio[]
   transactions Transaction[]
+  documents   Document[]   // AI: uploaded financial reports
 
   @@map("users")
 }
@@ -85,11 +88,51 @@ model Transaction {
   userId    String   // Foreign key to User
   stockId   String   // Foreign key to Stock
   createdAt DateTime @default(now())
-  
+
   // Relations
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   stock     Stock    @relation(fields: [stockId], references: [id], onDelete: Cascade)
 
   @@map("transactions")
+}
+
+// =========================================================================
+// AI / RAG models
+// =========================================================================
+
+// Document model - one row per uploaded financial PDF.
+// Stores file-level metadata so we can list and manage uploads in the UI.
+model Document {
+  id        String   @id @default(uuid())
+  userId   String
+  filename  String   // original filename shown in the UI
+  filePath  String   // path on disk where the file is stored
+  fileSize  Int      // in bytes
+  status    String   @default("processing") // processing | ready | failed
+  pageCount Int?     // populated after PDF parse
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chunks    Chunk[]
+
+  @@index([userId])
+  @@map("documents")
+}
+
+// Chunk model - one row per text chunk of a document.
+// `embedding` uses pgvector's vector type for similarity search.
+// We use `Unsupported` because Prisma does not natively model the vector type yet;
+// reads/writes for this column happen via raw SQL in pgVectorStore.js.
+model Chunk {
+  id         String                      @id @default(uuid())
+  documentId String
+  content    String                      @db.Text
+  chunkIndex Int                          // ordering within the document (for context display)
+  embedding  Unsupported("vector(768)")   // Gemini text-embedding-004 produces 768-dim vectors
+
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("chunks")
 }
 
