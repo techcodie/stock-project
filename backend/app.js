@@ -3,13 +3,13 @@ const express = require('express');
 const cors = require('cors');
 
 // Import routes
-// Import routes
 const authRoutes = require('./routes/authRoutes');
 const tradingRoutes = require('./routes/tradingRoutes');
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const walletRoutes = require('./routes/walletRoutes');
 const stockRoutes = require('./routes/stockRoutes');
+const aiRoutes = require('./ai/aiRoutes');
 
 // Import error handler
 const errorHandler = require('./middleware/errorHandler');
@@ -43,12 +43,6 @@ app.get('/health', (req, res) => {
 // Authentication routes (no auth required)
 app.use('/api/auth', authRoutes);
 
-
-app.get('/',(req,res)=>{
-  res.send('Hello World!')
-})
-
-
 // Trading routes (auth required)
 app.use('/api/trade', tradingRoutes);
 
@@ -64,6 +58,9 @@ app.use('/api/wallet', walletRoutes);
 // Stock routes (auth required)
 app.use('/api/stocks', stockRoutes);
 
+// AI / RAG routes (auth required)
+app.use('/api/ai', aiRoutes);
+
 // 404 handler for undefined routes
 app.use((req, res) => {
   res.status(404).json({
@@ -76,6 +73,3 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 module.exports = app;
-
-
-// Server restart trigger for Auth Middleware updates
