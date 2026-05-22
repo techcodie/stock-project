@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Trade from './pages/Trade';
 import Portfolio from './pages/Portfolio';
 import Transactions from './pages/Transactions';
+import AIResearch from './pages/AIResearch';
 import './styles.css';
 
 import ThreeBackground from './components/ThreeBackground';
@@ -84,6 +85,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Transactions />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ai-research"
+              element={
+                <ProtectedRoute>
+                  <AIResearch />
                 </ProtectedRoute>
               }
             />

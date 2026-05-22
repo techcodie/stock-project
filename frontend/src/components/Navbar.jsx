@@ -54,6 +54,12 @@ function Navbar() {
           >
             Transactions
           </Link>
+          <Link
+            to="/ai-research"
+            className={`nav-link ${location.pathname === '/ai-research' ? 'active' : ''}`}
+          >
+            AI Research ✨
+          </Link>
           <button onClick={handleLogout} className="btn-logout">
             Logout
           </button>
