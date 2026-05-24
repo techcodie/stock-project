@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../lib/prisma');
 
 // Price update interval: randomized between 3-5 seconds
 const UPDATE_INTERVAL_MIN = 3000;

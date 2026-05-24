@@ -1,14 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
-// Helper to simulate realistic price changes
-const simulatePrice = (basePrice) => {
-  // Generate random change between -2% and +2%
-  const changePercent = (Math.random() - 0.5) * 4;
-  let newPrice = basePrice + (basePrice * changePercent / 100);
-  newPrice = Math.max(0.1, Math.round(newPrice * 100) / 100);
-  return { price: newPrice, changePercent: parseFloat(changePercent.toFixed(2)) };
-};
+const prisma = require('../lib/prisma');
 
 /**
  * Get Portfolio Controller
@@ -32,21 +22,22 @@ const getPortfolio = async (req, res, next) => {
       }
     });
 
-    // Inject live simulated prices
+    // Calculate profit/loss from the stock's real current price. The price
+    // engine (services/priceService.js) keeps stock.currentPrice fresh every
+    // few seconds, so the portfolio, the trade page, and the price engine all
+    // show the same price instead of each one randomizing its own.
     const portfolioWithPrices = portfolio.map((holding) => {
-      // Use the stock's stored currentPrice as base for simulation
-      // In a real app, this would fetch from an external API
-      const quote = simulatePrice(holding.stock.currentPrice);
+      const currentPrice = holding.stock.currentPrice;
+      const currentValue = holding.quantity * currentPrice;
+      const investedValue = holding.quantity * holding.avgBuyPrice;
       return {
         ...holding,
-        stock: {
-          ...holding.stock,
-          currentPrice: quote.price,
-          changePercent: quote.changePercent
-        },
-        currentValue: holding.quantity * quote.price,
-        profitLoss: (holding.quantity * quote.price) - (holding.quantity * holding.avgBuyPrice),
-        profitLossPercent: ((quote.price - holding.avgBuyPrice) / holding.avgBuyPrice) * 100
+        currentValue,
+        profitLoss: currentValue - investedValue,
+        profitLossPercent:
+          holding.avgBuyPrice > 0
+            ? ((currentPrice - holding.avgBuyPrice) / holding.avgBuyPrice) * 100
+            : 0
       };
     });
 

@@ -1,6 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
 const { getStockPrice } = require('../services/priceService');
-const prisma = new PrismaClient();
+const prisma = require('../lib/prisma');
 
 /**
  * Buy Stock Controller

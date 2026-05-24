@@ -14,10 +14,8 @@
  *   <=>   cosine distance      ← we use this. Smaller = more similar.
  *   <#>   negative inner product
  */
-const { PrismaClient } = require('@prisma/client');
 const { v4: uuid } = require('uuid');
-
-const prisma = new PrismaClient();
+const prisma = require('../../lib/prisma');
 
 /**
  * Format a JS number[] as a pgvector literal: "[0.1,0.2,...]"

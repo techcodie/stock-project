@@ -13,7 +13,7 @@
  * an interviewer to see.
  */
 const fs = require('fs/promises');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../../lib/prisma');
 
 const { parsePdf } = require('../pdf/pdfParser');
 const { splitText } = require('../chunking/textSplitter');
@@ -21,8 +21,6 @@ const { embedOne, embedMany } = require('../embeddings/geminiEmbeddings');
 const { upsertChunks, searchSimilar } = require('../vectorstore/pgVectorStore');
 const { chatModel } = require('../llm/geminiClient');
 const { SYSTEM_PROMPT, buildRagPrompt } = require('../prompts/ragPrompts');
-
-const prisma = new PrismaClient();
 
 const TOP_K = 4; // how many chunks we retrieve per question
 
