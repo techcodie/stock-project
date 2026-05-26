@@ -26,18 +26,20 @@ function DocumentList({ documents, selectedId, onSelect, onDelete, loading }) {
       const res = await api.get(`/ai/documents/${doc.id}/content`, {
         responseType: 'blob',
       });
-      const blob = new Blob([res.data], { type: 'text/plain;charset=utf-8' });
+      // Backend streams the original PDF.
+      const blob = new Blob([res.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const a = window.document.createElement('a');
       a.href = url;
-      a.download = doc.filename.replace(/\.pdf$/i, '.txt');
+      // Keep the original filename (already .pdf) — falls back if missing.
+      a.download = doc.filename || 'document.pdf';
       window.document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Download failed:', err);
-      alert('Failed to download document content.');
+      alert('Failed to download document.');
     }
   };
 
@@ -102,11 +104,21 @@ function DocumentList({ documents, selectedId, onSelect, onDelete, loading }) {
                 {isReady && (
                   <button
                     onClick={(e) => handleDownload(e, doc)}
-                    style={styles.actionBtn}
+                    style={styles.downloadBtn}
                     aria-label="Download document text"
                     title="Download indexed text (.txt) — verify the LLM's source"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(52,211,153,0.12)';
+                      e.currentTarget.style.borderColor = 'rgba(52,211,153,0.5)';
+                      e.currentTarget.style.color = '#34d399';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)';
+                      e.currentTarget.style.color = '#e4e4e7';
+                    }}
                   >
-                    <Download size={14} />
+                    <Download size={15} />
                   </button>
                 )}
                 <button
@@ -114,11 +126,21 @@ function DocumentList({ documents, selectedId, onSelect, onDelete, loading }) {
                     e.stopPropagation();
                     onDelete(doc.id);
                   }}
-                  style={{ ...styles.actionBtn, ...styles.actionDanger }}
+                  style={styles.deleteBtn}
                   aria-label="Delete document"
                   title="Delete"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(244,63,94,0.12)';
+                    e.currentTarget.style.borderColor = 'rgba(244,63,94,0.5)';
+                    e.currentTarget.style.color = '#fb7185';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)';
+                    e.currentTarget.style.color = '#a1a1aa';
+                  }}
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={15} />
                 </button>
               </div>
             </div>
@@ -193,24 +215,34 @@ const styles = {
   },
   actions: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
+    flexDirection: 'row',
+    gap: '6px',
     flexShrink: 0,
+    alignItems: 'flex-start',
   },
-  actionBtn: {
-    background: 'transparent',
-    border: '1px solid rgba(255,255,255,0.08)',
-    color: '#a1a1aa',
+  downloadBtn: {
+    background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.18)',
+    color: '#e4e4e7',
     cursor: 'pointer',
-    padding: '5px',
+    padding: '6px 8px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: '6px',
     transition: 'all 0.15s ease',
   },
-  actionDanger: {
-    // hover color set inline via title; keep base same to match download button
+  deleteBtn: {
+    background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.18)',
+    color: '#a1a1aa',
+    cursor: 'pointer',
+    padding: '6px 8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '6px',
+    transition: 'all 0.15s ease',
   },
 };
 
