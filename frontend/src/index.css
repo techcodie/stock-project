@@ -1,84 +1,149 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
+/*
+ * Design system: shadcn/ui (https://ui.shadcn.com) — Radix + Tailwind.
+ * Dark theme. Colours live as CSS variables below and are exposed to Tailwind
+ * utilities (bg-card, text-muted-foreground, border-border, ...) via @theme.
+ * The animated hero background is from Aceternity UI (https://ui.aceternity.com).
+ */
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 :root {
+  /* Dark, zinc-based palette with an emerald primary (the brand colour). */
   --background: oklch(0 0 0);
-  --foreground: oklch(1 0 0);
-  --card: oklch(0.1 0 0 / 0.1);
-  --card-foreground: oklch(1 0 0);
-  --popover: oklch(0 0 0 / 0.8);
-  --popover-foreground: oklch(1 0 0);
-  --primary: oklch(1 0 0);
-  --primary-foreground: oklch(0 0 0);
-  --secondary: oklch(0.65 0.25 25);
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(1 0 0 / 0.5);
-  --muted-foreground: oklch(0.7 0 0);
-  --accent: oklch(0.65 0.25 25);
-  --accent-foreground: oklch(1 0 0);
-  --destructive: oklch(0.6 0.25 15);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(1 0 0 / 0.2);
-  --input: oklch(1 0 0 / 0.1);
-  --ring: oklch(1 0 0 / 0.3);
-  --chart-1: oklch(0.65 0.25 25);
-  --chart-2: oklch(0.8 0.15 85);
-  --chart-3: oklch(0.7 0.2 140);
-  --chart-4: oklch(0.7 0.2 240);
-  --chart-5: oklch(0.6 0.25 300);
-  --radius: 0.5rem;
-  --sidebar: oklch(0 0 0 / 0.9);
-  --sidebar-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(0.65 0.25 25);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.65 0.25 25);
-  --sidebar-accent-foreground: oklch(1 0 0);
-  --sidebar-border: oklch(1 0 0 / 0.2);
-  --sidebar-ring: oklch(1 0 0 / 0.3);
-  --font-geist-sans: "Geist Sans", sans-serif;
-  --font-geist-mono: "Geist Mono", monospace;
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.9 / 0.55);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.16 0.004 285 / 0.96);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.63 0.16 163);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.27 0.006 286 / 0.6);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.27 0.006 286 / 0.5);
+  --muted-foreground: oklch(0.705 0.015 286);
+  --accent: oklch(0.27 0.006 286 / 0.7);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.637 0.237 25.3);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 0.1);
+  --input: oklch(1 0 0 / 0.14);
+  --ring: oklch(0.63 0.16 163 / 0.5);
+  --radius: 0.625rem;
 }
 
-.dark {
-  --background: oklch(0 0 0);
-  --foreground: oklch(1 0 0);
-  --card: oklch(0.1 0 0 / 0.1);
-  --card-foreground: oklch(1 0 0);
-  --popover: oklch(0 0 0 / 0.8);
-  --popover-foreground: oklch(1 0 0);
-  --primary: oklch(1 0 0);
-  --primary-foreground: oklch(0 0 0);
-  --secondary: oklch(0.65 0.25 25);
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(1 0 0 / 0.5);
-  --muted-foreground: oklch(0.7 0 0);
-  --accent: oklch(0.65 0.25 25);
-  --accent-foreground: oklch(1 0 0);
-  --destructive: oklch(0.6 0.25 15);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(1 0 0 / 0.2);
-  --input: oklch(1 0 0 / 0.1);
-  --ring: oklch(1 0 0 / 0.3);
-  --chart-1: oklch(0.65 0.25 25);
-  --chart-2: oklch(0.8 0.15 85);
-  --chart-3: oklch(0.7 0.2 140);
-  --chart-4: oklch(0.7 0.2 240);
-  --chart-5: oklch(0.6 0.25 300);
-  --sidebar: oklch(0 0 0 / 0.9);
-  --sidebar-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(0.65 0.25 25);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.65 0.25 25);
-  --sidebar-accent-foreground: oklch(1 0 0);
-  --sidebar-border: oklch(1 0 0 / 0.2);
-  --sidebar-ring: oklch(1 0 0 / 0.3);
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    color: var(--foreground);
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* Headings use the display face (Space Grotesk) for a sharper, branded feel. */
+  h1,
+  h2 {
+    font-family: "Space Grotesk", "Inter", sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Dim, premium veil over the Aceternity shader background so content stays
+     readable on every page while the emerald glow still shows through. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -5;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.63 0.16 163 / 0.12), transparent 60%),
+      oklch(0 0 0 / 0.72);
+  }
+
+  /* Tabular figures for prices/numbers so columns line up nicely. */
+  table,
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
-/* Existing styles preserved if any (overwritten here as requested to 'Extend', but often easier to replace index.css and keep styles.css separate) */
+/* Reusable spinner used by loading states across the app. */
+@layer components {
+  .spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 9999px;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Slowly shifting emerald gradient for the hero headline. */
+.animate-gradient-text {
+  background-size: 200% auto;
+  animation: gradient-pan 6s ease infinite;
+}
+
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-gradient-text {
+    animation: none;
+  }
+}

@@ -9,7 +9,6 @@ import Trade from './pages/Trade';
 import Portfolio from './pages/Portfolio';
 import Transactions from './pages/Transactions';
 import AIResearch from './pages/AIResearch';
-import './styles.css';
 
 import ThreeBackground from './components/ThreeBackground';
 
@@ -25,9 +24,9 @@ function App() {
   return (
     <Router>
       <ThreeBackground />
-      <div className="app">
+      <div className="relative flex min-h-screen flex-col">
         <Navbar />
-        <main className="main-content">
+        <main className="flex-1">
           <Routes>
             {/* Public routes */}
             <Route

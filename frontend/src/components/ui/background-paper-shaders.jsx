@@ -69,8 +69,11 @@ export function ShaderPlane({
 
     useFrame((state) => {
         if (mesh.current) {
-            uniforms.time.value = state.clock.elapsedTime
-            uniforms.intensity.value = 1.0 + Math.sin(state.clock.elapsedTime * 2) * 0.3
+            // Animate through the live material (owned by Three.js) rather than
+            // mutating the memoized `uniforms` object directly.
+            const u = mesh.current.material.uniforms
+            u.time.value = state.clock.elapsedTime
+            u.intensity.value = 1.0 + Math.sin(state.clock.elapsedTime * 2) * 0.3
         }
     })
 
