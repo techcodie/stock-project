@@ -1,22 +1,27 @@
 import { useState, useEffect, useCallback } from 'react';
+import { RefreshCw, ArrowDownLeft, ArrowUpRight, Receipt, Clock } from 'lucide-react';
 import api from '../services/api';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+import { Card, CardContent } from '../components/ui/card';
+import { motion as Motion } from 'motion/react';
+import { Reveal, Stagger, StaggerItem, CountUp } from '../components/ui/motion';
+import { cn } from '../lib/utils';
+
+const inr = (n) => n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function Transactions() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filter, setFilter] = useState('ALL'); // ALL, BUY, SELL
+  const [filter, setFilter] = useState('ALL');
 
-  // Fetch transactions data
   const fetchTransactions = useCallback(async () => {
     setLoading(true);
     setError('');
-
     try {
       const response = await api.get('/transactions');
-      if (response.data.success) {
-        setTransactions(response.data.data || []);
-      }
+      if (response.data.success) setTransactions(response.data.data || []);
     } catch (err) {
       console.error('Transactions error:', err);
       setError(err.response?.data?.message || 'Failed to load transactions');
@@ -29,27 +34,23 @@ function Transactions() {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return 'Invalid Date';
-    
     return new Intl.DateTimeFormat('en-IN', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     }).format(date);
   };
 
-  // Format time ago
   const timeAgo = (dateString) => {
     const now = new Date();
     const past = new Date(dateString);
     const diffInSeconds = Math.floor((now - past) / 1000);
-
     if (diffInSeconds < 60) return 'Just now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
@@ -57,185 +58,157 @@ function Transactions() {
     return formatDate(dateString);
   };
 
-  // Filter transactions
-  const filteredTransactions = transactions.filter(t =>
-    filter === 'ALL' || t.type === filter
-  );
+  const filteredTransactions = transactions.filter((t) => filter === 'ALL' || t.type === filter);
+  const buyCount = transactions.filter((t) => t.type === 'BUY').length;
+  const sellCount = transactions.filter((t) => t.type === 'SELL').length;
+  const totalVolume = transactions.reduce((sum, t) => sum + t.quantity * t.price, 0);
 
-  // Calculate stats
-  const buyCount = transactions.filter(t => t.type === 'BUY').length;
-  const sellCount = transactions.filter(t => t.type === 'SELL').length;
-  const totalVolume = transactions.reduce((sum, t) => sum + (t.quantity * t.price), 0);
+  const stats = [
+    { label: 'Buy Orders', amount: buyCount, prefix: '' },
+    { label: 'Sell Orders', amount: sellCount, prefix: '' },
+    { label: 'Total Volume', amount: totalVolume, prefix: '₹' },
+    { label: 'Total Trades', amount: transactions.length, prefix: '' },
+  ];
+
+  const tabs = [
+    { key: 'ALL', label: `All (${transactions.length})` },
+    { key: 'BUY', label: `Buy (${buyCount})` },
+    { key: 'SELL', label: `Sell (${sellCount})` },
+  ];
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="spinner"></div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="spinner" />
       </div>
     );
   }
 
   return (
-    <div className="transactions-page">
-      <div className="transactions-header">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1>Transaction History</h1>
-          <p className="transactions-subtitle">View all your trading activity</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Transaction History
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">View all your trading activity</p>
         </div>
-        <button onClick={fetchTransactions} className="btn-refresh">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9h-3m-6 9a9 9 0 0 1-9-9m9 9v-3m-9-6a9 9 0 0 1 9-9m-9 9h3m6-9v3" />
-          </svg>
+        <Button variant="outline" onClick={fetchTransactions}>
+          <RefreshCw className="h-4 w-4" />
           Refresh
-        </button>
-      </div>
+        </Button>
+      </header>
 
       {error && (
-        <div className="alert alert-error">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 8v4M12 16h.01" />
-          </svg>
+        <div className="mb-6 rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-red-400">
           {error}
         </div>
       )}
 
-      {/* Stats Cards */}
       {transactions.length > 0 && (
-        <div className="transactions-stats">
-          <div className="stat-item">
-            <span className="stat-label">Buy Orders</span>
-            <div className="stat-card">
-              <div className="stat-icon buy-bg" style={{ marginRight: '1rem' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-              </div>
-              <div className="stat-value">{buyCount}</div>
-            </div>
-          </div>
-
-          <div className="stat-item">
-            <span className="stat-label">Sell Orders</span>
-            <div className="stat-card">
-              <div className="stat-icon sell-bg" style={{ marginRight: '1rem' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                </svg>
-              </div>
-              <div className="stat-value">{sellCount}</div>
-            </div>
-          </div>
-
-          <div className="stat-item">
-            <span className="stat-label">Total Volume</span>
-            <div className="stat-card">
-              <div className="stat-icon total-bg" style={{ marginRight: '1rem' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z" />
-                </svg>
-              </div>
-              <div className="stat-value">₹{totalVolume.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
-            </div>
-          </div>
-
-          <div className="stat-item">
-            <span className="stat-label">Total Trades</span>
-            <div className="stat-card">
-              <div className="stat-icon count-bg" style={{ marginRight: '1rem' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" />
-                </svg>
-              </div>
-              <div className="stat-value">{transactions.length}</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Filter Tabs */}
-      {transactions.length > 0 && (
-        <div className="filter-tabs">
-          <button
-            className={`filter-tab ${filter === 'ALL' ? 'active' : ''}`}
-            onClick={() => setFilter('ALL')}
-          >
-            All ({transactions.length})
-          </button>
-          <button
-            className={`filter-tab ${filter === 'BUY' ? 'active' : ''}`}
-            onClick={() => setFilter('BUY')}
-          >
-            Buy ({buyCount})
-          </button>
-          <button
-            className={`filter-tab ${filter === 'SELL' ? 'active' : ''}`}
-            onClick={() => setFilter('SELL')}
-          >
-            Sell ({sellCount})
-          </button>
-        </div>
-      )}
-
-      {/* Transactions List */}
-      {filteredTransactions.length === 0 ? (
-        <div className="empty-state">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" />
-          </svg>
-          <h3>No Transactions Yet</h3>
-          <p>Your trading history will appear here once you start buying or selling stocks</p>
-        </div>
-      ) : (
-        <div className="transactions-list">
-          {filteredTransactions.map((transaction) => (
-            <div key={transaction.id} className="transaction-card">
-              <div className={`transaction-type-badge ${transaction.type.toLowerCase()}`}>
-                {transaction.type === 'BUY' ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                  </svg>
-                )}
-                {transaction.type}
-              </div>
-
-              <div className="transaction-main">
-                <div className="transaction-stock">
-                  <div className="transaction-symbol">{transaction.stock?.symbol || 'N/A'}</div>
-                  <div className="transaction-name">{transaction.stock?.name || 'Unknown Stock'}</div>
-                </div>
-
-                <div className="transaction-details">
-                  <div className="transaction-detail">
-                    <span className="detail-label">Quantity</span>
-                    <span className="detail-value">{transaction.quantity} shares</span>
-                  </div>
-                  <div className="transaction-detail">
-                    <span className="detail-label">Price</span>
-                    <span className="detail-value">₹{transaction.price?.toFixed(2)}</span>
-                  </div>
-                  <div className="transaction-detail">
-                    <span className="detail-label">Total</span>
-                    <span className="detail-value total">
-                      ₹{(transaction.quantity * transaction.price).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="transaction-time">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 6v6l4 2" />
-                </svg>
-                {timeAgo(transaction.createdAt)}
-              </div>
-            </div>
+        <Stagger className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map(({ label, amount, prefix }) => (
+            <StaggerItem key={label} lift>
+              <Card className="h-full">
+                <CardContent className="p-5">
+                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    {label}
+                  </span>
+                  <CountUp
+                    value={amount}
+                    prefix={prefix}
+                    decimals={0}
+                    className="mt-2 block text-2xl font-bold tabular-nums text-foreground"
+                  />
+                </CardContent>
+              </Card>
+            </StaggerItem>
           ))}
+        </Stagger>
+      )}
+
+      {transactions.length > 0 && (
+        <div className="mb-6 inline-flex rounded-lg border border-border bg-card p-1 backdrop-blur-xl">
+          {tabs.map((tab) => {
+            const active = filter === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setFilter(tab.key)}
+                className="relative rounded-md px-4 py-1.5 text-sm font-medium transition-colors"
+              >
+                {active && (
+                  <Motion.span
+                    layoutId="txn-tab-pill"
+                    className="absolute inset-0 rounded-md bg-primary"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className={cn('relative z-10', active ? 'text-primary-foreground' : 'text-muted-foreground')}>
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {filteredTransactions.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
+            <Receipt className="h-10 w-10 text-muted-foreground" />
+            <h3 className="text-lg font-semibold text-foreground">No transactions yet</h3>
+            <p className="max-w-sm text-sm text-muted-foreground">
+              Your trading history will appear here once you start buying or selling stocks.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {filteredTransactions.map((transaction, i) => {
+            const isBuy = transaction.type === 'BUY';
+            return (
+              <Reveal key={transaction.id} delay={Math.min(i * 0.04, 0.4)}>
+              <Card className="transition-colors hover:border-primary/30">
+                <CardContent className="flex flex-wrap items-center gap-4 p-4">
+                  <Badge variant={isBuy ? 'success' : 'danger'}>
+                    {isBuy ? <ArrowDownLeft className="h-3.5 w-3.5" /> : <ArrowUpRight className="h-3.5 w-3.5" />}
+                    {transaction.type}
+                  </Badge>
+
+                  <div className="min-w-[8rem]">
+                    <div className="font-semibold text-foreground">{transaction.stock?.symbol || 'N/A'}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {transaction.stock?.name || 'Unknown Stock'}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-1 flex-wrap justify-end gap-x-8 gap-y-2 text-sm">
+                    <div className="text-right">
+                      <div className="text-xs text-muted-foreground">Quantity</div>
+                      <div className="font-medium tabular-nums text-foreground">{transaction.quantity} shares</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-muted-foreground">Price</div>
+                      <div className="font-medium tabular-nums text-foreground">₹{transaction.price?.toFixed(2)}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-muted-foreground">Total</div>
+                      <div className="font-semibold tabular-nums text-foreground">
+                        ₹{inr(transaction.quantity * transaction.price)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3.5 w-3.5" />
+                    {timeAgo(transaction.createdAt)}
+                  </div>
+                </CardContent>
+              </Card>
+              </Reveal>
+            );
+          })}
         </div>
       )}
     </div>

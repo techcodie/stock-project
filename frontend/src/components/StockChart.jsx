@@ -130,12 +130,12 @@ const StockChart = ({ symbol }) => {
                 </ResponsiveContainer>
             </div>
 
-            <style sx>{`
+            <style>{`
                 .stock-chart-wrapper {
-                    background: #111827;
+                    background: rgba(255, 255, 255, 0.02);
                     padding: 20px;
                     border-radius: 12px;
-                    border: 1px solid #374151;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
                     margin-top: 20px;
                 }
                 .chart-controls {
@@ -147,7 +147,7 @@ const StockChart = ({ symbol }) => {
                 .timeframe-selector {
                     display: flex;
                     gap: 8px;
-                    background: #1f2937;
+                    background: rgba(255, 255, 255, 0.05);
                     padding: 4px;
                     border-radius: 8px;
                 }
@@ -166,7 +166,7 @@ const StockChart = ({ symbol }) => {
                     color: #fff;
                 }
                 .tf-btn.active {
-                    background: #374151;
+                    background: rgba(255, 255, 255, 0.12);
                     color: #fff;
                     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
                 }
@@ -176,15 +176,15 @@ const StockChart = ({ symbol }) => {
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
-                    background: #111827;
+                    background: transparent;
                     border-radius: 12px;
                     color: #9ca3af;
                 }
-                .spinner {
+                .chart-loading .spinner {
                     width: 30px;
                     height: 30px;
-                    border: 3px solid #374151;
-                    border-top-color: #3b82f6;
+                    border: 3px solid rgba(255, 255, 255, 0.15);
+                    border-top-color: #10b981;
                     border-radius: 50%;
                     animation: spin 1s linear infinite;
                     margin-bottom: 10px;
