@@ -1,0 +1,11 @@
+[
+  "return_1d",
+  "return_5d",
+  "sma_ratio_10",
+  "sma_ratio_20",
+  "rsi_14",
+  "macd_diff",
+  "volatility_10",
+  "momentum_10",
+  "volume_ratio"
+]
