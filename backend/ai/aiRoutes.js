@@ -14,6 +14,8 @@ const {
   listDocuments,
   deleteDocument,
   downloadDocumentContent,
+  predict,
+  modelMetrics,
 } = require('./aiController');
 
 // Everything under /api/ai requires authentication.
@@ -28,10 +30,16 @@ router.post('/chat', chat);
 // GET  /api/ai/documents — list current user's documents
 router.get('/documents', listDocuments);
 
-// GET /api/ai/documents/:id/content — download the indexed text as .txt
+// GET /api/ai/documents/:id/content — download the original source PDF
 router.get('/documents/:id/content', downloadDocumentContent);
 
 // DELETE /api/ai/documents/:id — delete a document and its chunks
 router.delete('/documents/:id', deleteDocument);
+
+// --- ML price-prediction service (proxied to the Python FastAPI service) ---
+// GET /api/ai/predict/:symbol — next-day up/down prediction for a stock
+router.get('/predict/:symbol', predict);
+// GET /api/ai/model/metrics — model card + evaluation metrics
+router.get('/model/metrics', modelMetrics);
 
 module.exports = router;
