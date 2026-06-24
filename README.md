@@ -20,8 +20,17 @@ A full-stack application for practicing stock trading with ₹10,00,000 of virtu
 - Upload a 10-K, annual report, or earnings PDF
 - Ask natural-language questions about it
 - Answers cite the exact source passages used
-- Download the indexed text (.txt) to verify LLM answers against the source
+- Download the original source PDF to verify LLM answers against the source
 - Backed by Gemini embeddings + pgvector similarity search
+
+### AI/ML price prediction
+
+- A **machine-learning model** predicts whether a stock closes up or down the next day
+- Trained in Python (scikit-learn) on technical-indicator features, with a documented
+  Jupyter notebook (EDA → train/test → evaluation → feature importance)
+- Served by a **FastAPI microservice**; shown in the UI with probability, confidence, and the
+  top contributing signals
+- See [ml-service/README.md](ml-service/README.md) for the model card and interview notes
 
 ---
 
@@ -33,6 +42,7 @@ A full-stack application for practicing stock trading with ₹10,00,000 of virtu
 | Backend    | Node.js + Express.js, JWT auth, bcryptjs                                                    |
 | Database   | PostgreSQL with Prisma ORM + pgvector extension                                             |
 | AI         | Google Gemini (`gemini-2.5-flash` + `gemini-embedding-001`), `pdf-parse`, vanilla-JS RAG    |
+| ML         | Python · FastAPI · scikit-learn · pandas (price-prediction microservice + Jupyter notebook) |
 | Deployment | Frontend on Vercel, backend on Render, database on Neon                                     |
 
 ---
@@ -51,6 +61,10 @@ stock-project/
 │   └── services/
 ├── frontend/                React SPA
 │   └── src/{pages,components,services}
+├── ml-service/              Python ML microservice (FastAPI + scikit-learn)
+│   ├── train.py             training + evaluation pipeline
+│   ├── app.py               FastAPI serving layer
+│   └── notebooks/           Jupyter notebook (full ML walk-through)
 ├── RAG.md                   In-depth architecture doc for the AI feature
 ├── render.yaml              Backend + Postgres deploy config (Render)
 ├── vercel.json              Frontend deploy config (Vercel)
@@ -92,14 +106,26 @@ npm install
 npm run dev                   # starts on http://localhost:5173
 ```
 
-### 4. (Optional) Seed sample AI documents
+### 4. ML prediction service (Python)
+
+```bash
+cd ml-service
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app:app --port 8000   # serves price-direction predictions
+```
+
+The trained model is committed, so it runs immediately. See
+[ml-service/README.md](ml-service/README.md) to retrain or use real market data.
+
+### 5. (Optional) Seed sample AI documents
 
 ```bash
 cd backend
 npm run seed:ai               # seeds 3 sample financial reports for every user
 ```
 
-### 5. (Optional) Seed a realistic test user portfolio
+### 6. (Optional) Seed a realistic test user portfolio
 
 ```bash
 cd backend
@@ -112,19 +138,33 @@ Resets `testuser@gmail.com` to a 60-day trading history (13 trades, 9 holdings).
 
 ## 🔑 Test Credentials
 
-| Email                | Password  |
-| -------------------- | --------- |
-| `testuser@gmail.com` | `test123` |
+The fastest way in: click **"🚀 View Live Demo"** on the landing page (or
+**"Try Demo Account"** on the login page) to log straight into a pre-populated
+account — no typing needed.
+
+| Account | Email                | Password  |
+| ------- | -------------------- | --------- |
+| Demo    | `demo@demo.com`      | `demo123` |
+| Test    | `testuser@gmail.com` | `test123` |
+
+To (re)create the demo account's data:
+
+```bash
+cd backend
+npm run seed:demo                       # holdings, transactions, wallet
+node scripts/seedSamples.js demo@demo.com   # 3 sample AI Research documents
+```
 
 ---
 
 ## 🧭 What runs where
 
-| Service            | Port   | Purpose                                            |
-| ------------------ | ------ | -------------------------------------------------- |
-| Frontend (Vite)    | `5173` | React app                                          |
-| Backend (Express)  | `3000` | API + JWT auth + AI orchestration                  |
-| Database (Postgres)| `5432` | Trading data + AI document chunks + vectors        |
+| Service              | Port   | Purpose                                           |
+| -------------------- | ------ | ------------------------------------------------- |
+| Frontend (Vite)      | `5173` | React app                                         |
+| Backend (Express)    | `3000` | API + JWT auth + AI orchestration                 |
+| ML service (FastAPI) | `8000` | Stock price-direction predictions (scikit-learn)  |
+| Database (Postgres)  | `5432` | Trading data + AI document chunks + vectors       |
 
 In dev, the React app uses Vite's proxy to talk to `localhost:3000`.
 
